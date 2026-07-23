@@ -1,0 +1,17 @@
+# CRG 图库（若在本仓跑过 code-review-graph）
+.code-review-graph/
+
+# 日志分流临时产物（log-triage 落 /tmp/logscope/）
+*.log
+.opencode/logs/
+
+# opencode 插件本地产物
+.opencode/node_modules/
+.opencode/package*.json
+.opencode/bun.lock
+
+# 编辑器 / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
