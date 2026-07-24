@@ -4,7 +4,7 @@
 # Drain3 模板库默认落 ~/.logscope/templates/（home 位置，跨 cwd/项目累积；不入本仓）
 templates/
 
-# 日志分流临时产物（log-triage 落 /tmp/logscope/）
+# 日志分流临时产物落 ~/.logscope/tmp/（home，不入本仓）
 *.log
 .opencode/logs/
 

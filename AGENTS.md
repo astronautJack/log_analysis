@@ -8,7 +8,7 @@
 |---|---|---|
 | 代码图 + 回溯 | **code-review-graph**（CRG） | CLI `code-review-graph`（`~/.local/bin/`），`--repo <R>` 任意路径 |
 | 上下文兜底 | **opencode-dcp**（DCP） | 全局插件，自动 |
-| 日志结构化（v1） | bash grep+sed 模板归并（借 Drain3 思路） | log-triage 内置；升级可装 Drain3 或接 MCP log server |
+| 日志结构化 | ✅ 纯 Python（Drain3）模板归并 | `~/.logscope/scripts/drain3_triage.py`，跨平台不依赖 Unix 工具 |
 
 ## 核心思想
 
@@ -18,7 +18,7 @@
 
 - 命令：`/diag <日志文件|文本> --repo <R> [--wiki <W>]`
 - CRG 子命令（code-tracer 用，都带 `--repo <R>`）：`build` / `update` / `status` / `detect-changes --brief` / `search` / `query callers_of` / `impact` / `flow` / `visualize`。
-- CRG 不在 PATH 时用全路径 `$HOME/.local/bin/code-review-graph`（Windows 生产走 Git Bash，`$HOME` 解析为 `C:\Users\<你>`，Git Bash 自动补 `.exe`，写法不变）。
+- CRG：`uv tool install code-review-graph` 后在 `~/.local/bin`；确保该目录在 PATH（Windows PowerShell：`$env:Path += ";$HOME\.local\bin"`），或 agent 用全路径 `~/.local/bin/code-review-graph`（Windows 加 `.exe`）。
 - 改完 `.opencode/` 或 `opencode.json` 后**重启 opencode** 才生效（配置仅启动时加载一次）。
 
 ## 约定

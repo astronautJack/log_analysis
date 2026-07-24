@@ -17,34 +17,38 @@
 | 依赖 | 说明 |
 |---|---|
 | **opencode** ≥ 1.18 | 工具集跑在 opencode 上 |
-| **Git for Windows** | 生产为 Windows：提供 Git Bash；opencode 的 bash 工具走 Git Bash，`~`/`$HOME`/`export PATH`/`~/.bashrc` 直接可用 |
+| **git** | Windows 生产：装 [Git for Windows](https://git-scm.com/download/win)（只需 git，**不依赖 Git Bash**）；agent 只用 git+uv+python+opencode 原生工具 |
 | **uv** + **code-review-graph** (CRG) | `uv tool install code-review-graph` → `~/.local/bin/code-review-graph` |
 | **opencode-dcp** (DCP) | `opencode plugin @tarquinen/opencode-dcp@latest --global` → 上下文兜底 |
 | **glm-5.2 端点** | 公司内网 LLM 端点（`model`/`small_model` 由全局 opencode 配置提供，本仓不写死） |
 
 ## 安装
 
-> Linux/macOS 直接照跑。**Windows 生产**：先装 [Git for Windows](https://git-scm.com/download/win)（带 Git Bash），让 opencode 的 shell 走 Git Bash，下面命令在 Git Bash 里原样可用。
+> Linux/macOS 用 bash；**Windows 生产**用 **PowerShell**（opencode Windows 原生，**不依赖 Git Bash**，只需 git + uv）。下面命令跨平台，差异处标了 PS 版。
 
 ```bash
 # 1. 拿到本仓
-git clone <本仓地址> log_analysis && cd log_analysis
+git clone <本仓地址> log_analysis
+cd log_analysis
 
-# 2. 装 uv（Git Bash 跑这个；PowerShell 用 irm https://astral.sh/install.ps1 | iex）
-curl -LsSf https://astral.sh/install.sh | sh
+# 2. 装 uv  （Windows PowerShell: irm https://astral.sh/install.ps1 | iex）
+curl -LsSf https://astral.sh/install.sh | sh        # Linux/macOS
 
-# 3. 装 CRG
+# 3. 装 CRG  （uv 跨平台）
 uv tool install code-review-graph
 
 # 4. 装 DCP 全局插件
 opencode plugin @tarquinen/opencode-dcp@latest --global
 
-# 5. 让本会话能直接找到 code-review-graph（否则 agent 用全路径）
-export PATH="$HOME/.local/bin:$PATH"   # 永久：写进 ~/.bashrc
+# 5. 确保 ~/.local/bin（CRG）在 PATH
+#    uv 安装器通常已加；没有则——Linux: export PATH="$HOME/.local/bin:$PATH"
+#                          Win PS: $env:Path += ";$HOME\.local\bin"  （永久用 setx）
+#    或 agent 直接用全路径 ~/.local/bin/code-review-graph（Windows 加 .exe）
 
-# 5.1 装 LogScope 日志分流脚本到全局（去 cwd，log-triage 用 $HOME/.logscope/scripts/ 调）
-mkdir -p ~/.logscope/scripts && cp scripts/drain3_triage.py ~/.logscope/scripts/
-#    改源脚本后重装：重跑上面 cp（Linux 也可 ln -sf scripts/drain3_triage.py ~/.logscope/scripts/）
+# 5.1 装 LogScope 日志分流脚本到全局（去 cwd；log-triage 用 ~/.logscope/scripts/ 调）
+#     Linux:  mkdir -p ~/.logscope/scripts && cp scripts/drain3_triage.py ~/.logscope/scripts/
+#     Win PS:  mkdir -Force ~/.logscope/scripts; cp scripts/drain3_triage.py ~/.logscope/scripts/
+#     改源脚本后重装：重跑上面（Linux 也可 ln -sf）
 
 # 6. 在本仓启动 opencode（加载 .opencode/ + AGENTS.md + opencode.json）
 opencode
@@ -76,10 +80,10 @@ opencode
 ## 约定与注意
 
 - **只定位不分类**：不判我方/客户；目标就是定位到代码行。
-- **日志不进上下文**：log-triage 产有界 digest + 预览指针；取证按需 `sed -n` 回读行段。
+- **日志不进上下文**：log-triage 产有界 digest + 预览指针；取证按需用 opencode `read` 工具回读行段（跨平台，不用 sed）。
 - **CRG 新鲜度门**：code-tracer 先查图新鲜（`status`+`detect-changes`），缺失/过时会**问你要不要 agent 跑 build/update**，不擅自建图（大仓 build 贵）。
 - **CRG 副作用**：会在目标仓建 `.code-review-graph/`（图库）；建议加进该仓 `.gitignore`。
-- **升级路径**：v1 日志结构化用 bash grep+sed（借 Drain3 思路）；要更高精度可装 **Drain3**（`uv tool install drain3`），或接 **MCP log server**（如 `wolven-tech/mcp-log-server`）把 grep 换成结构化 MCP 工具。详见 `方案设计.md` §升级路径。
+- **日志结构化**：纯 Python（Drain3）脚本 `~/.logscope/scripts/drain3_triage.py`，跨平台不依赖 Unix 工具；模板持久化 `~/.logscope/templates/` 跨 run 累积。升级可接 **MCP log server**（如 `wolven-tech/mcp-log-server`）。详见 `方案设计.md` §5。
 
 ## 目录结构
 
