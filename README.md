@@ -79,7 +79,6 @@ opencode
 
 ## 约定与注意
 
-- **只定位不分类**：不判我方/客户；目标就是定位到代码行。
 - **日志不进上下文**：log-triage 产有界 digest + 预览指针；取证按需用 opencode `read` 工具回读行段（跨平台，不用 sed）。
 - **CRG 新鲜度门**：code-tracer 先查图新鲜（`status`+`detect-changes`），缺失/过时会**问你要不要 agent 跑 build/update**，不擅自建图（大仓 build 贵）。
 - **CRG 副作用**：会在目标仓建 `.code-review-graph/`（图库）；建议加进该仓 `.gitignore`。
