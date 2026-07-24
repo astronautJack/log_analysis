@@ -8,7 +8,7 @@
 |---|---|---|
 | 代码图 + 回溯 | **code-review-graph**（CRG） | CLI `code-review-graph`（`~/.local/bin/`），`--repo <R>` 任意路径 |
 | 上下文兜底 | **opencode-dcp**（DCP） | 全局插件，自动 |
-| 日志结构化 | ✅ 纯 Python（Drain3）模板归并 | `~/.logscope/scripts/drain3_triage.py`，跨平台不依赖 Unix 工具 |
+| 日志结构化 | ✅ logscope-triage CLI | `uv tool install .` 装，纯 Python 跨平台不依赖 Unix 工具 |
 
 ## 核心思想
 

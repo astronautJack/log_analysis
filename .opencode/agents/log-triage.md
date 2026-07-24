@@ -23,7 +23,7 @@ permission:
 输入：日志（文件路径 or 文本）、`<repo>`（可选）。
 
 1. **落盘 raw**（若输入是文本）：用 opencode `write` 工具写到 `~/.logscope/tmp/log_<时间戳>.txt`（home，跨平台；不用 `/tmp`）。若已是文件路径，直接用。
-2. **结构化**（Drain3，纯 Python）：调 `uv run --with drain3 python ~/.logscope/scripts/drain3_triage.py <rawfile> --top 50 [--profile <name>]` —— 一体产出：Drain3 模板簇 + HiSysEvent 事件（`FILE/LINE/CALLER` 锚点）+ faultlog 栈帧 + 本次新见簇。**模板自动持久化**到 `~/.logscope/templates/<profile>.json` 跨 run 累积（home，跨 cwd/Windows）；新见簇=潜在信号。
+2. **结构化**（Drain3，纯 Python）：调 `logscope-triage <rawfile> --top 50 [--profile <name>]`（installed CLI，在 PATH）—— 一体产出：Drain3 模板簇 + HiSysEvent 事件（`FILE/LINE/CALLER` 锚点）+ faultlog 栈帧 + 本次新见簇。**模板自动持久化**到 `~/.logscope/templates/<profile>.json` 跨 run 累积（home，跨 cwd/Windows）；新见簇=潜在信号。
 3. **有界 digest**：脚本输出即 digest（脚本内部已截断）。标出 **claimed error**（日志声称的错）。
 4. **取证行段回读**：用 opencode `read` 工具（offset/limit 按行读），**不**用 bash `sed`。
 5. **返回预览指针**：`{raw_file, digest, key_lines, claimed_error}`。
