@@ -12,8 +12,6 @@
 4. **自校正**：Critic 复核证据链，弱则带反馈重试（≤3 次）。
 5. **报告**：哪行代码 + 置信度 + 证据链（log 行号 + file:line + 图边）→ 交人审。
 
-**只定位，不判责任**（不分类我方/客户——代码不管谁的都放进来分析）。
-
 ## 前置条件
 
 | 依赖 | 说明 |
@@ -43,6 +41,10 @@ opencode plugin @tarquinen/opencode-dcp@latest --global
 
 # 5. 让本会话能直接找到 code-review-graph（否则 agent 用全路径）
 export PATH="$HOME/.local/bin:$PATH"   # 永久：写进 ~/.bashrc
+
+# 5.1 装 LogScope 日志分流脚本到全局（去 cwd，log-triage 用 $HOME/.logscope/scripts/ 调）
+mkdir -p ~/.logscope/scripts && cp scripts/drain3_triage.py ~/.logscope/scripts/
+#    改源脚本后重装：重跑上面 cp（Linux 也可 ln -sf scripts/drain3_triage.py ~/.logscope/scripts/）
 
 # 6. 在本仓启动 opencode（加载 .opencode/ + AGENTS.md + opencode.json）
 opencode

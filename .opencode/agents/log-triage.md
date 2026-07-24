@@ -5,6 +5,7 @@ permission:
   edit: deny
   bash:
     "*": ask
+    "uv *": allow
     "git *": allow
     "code-review-graph *": allow
     "git commit *": deny
@@ -26,7 +27,7 @@ permission:
    - `grep -nE "ERROR|FATAL|Exception|Throwable|abort|failed|panic|crash|#[0-9]+ "` 抽错误行 + 栈帧。
    - 抽时间线：首/末时间戳、错误突发窗口。
    - 抽关键符号：函数名/类名/error code/文件路径（栈帧里 `at file:line` 或 `#N file:line`）。
-3. **结构化**（Drain3，持久化）：调 `uv run --with drain3 python scripts/drain3_triage.py <raw> --top 50 [--profile <name>]` —— 一体产出：Drain3 模板簇 + HiSysEvent 事件（`FILE/LINE/CALLER` 锚点）+ faultlog 栈帧。**模板自动持久化**到 `templates/<profile>.json` 跨 run 累积（用户每次 /diag 自动建库，**无需单独训练**）；**本次新见的簇**（pre-existing 之外）单独标出=潜在异常信号。比 sed 归并精度高（解析树 + 数值 token 参数化）。
+3. **结构化**（Drain3，持久化）：调 `uv run --with drain3 python $HOME/.logscope/scripts/drain3_triage.py <raw> --top 50 [--profile <name>]` —— 一体产出：Drain3 模板簇 + HiSysEvent 事件（`FILE/LINE/CALLER` 锚点）+ faultlog 栈帧。**模板自动持久化**到 `~/.logscope/templates/<profile>.json` 跨 run 累积（用户每次 /diag 自动建库，**无需单独训练**；home 位置，跨 cwd/Windows 稳定）；**本次新见的簇**（pre-existing 之外）单独标出=潜在异常信号。比 sed 归并精度高（解析树 + 数值 token 参数化）。
 4. **有界 digest**：模板表 + top 错误代表行（≤50）+ 栈帧（≤20）+ 时间线 + 关键符号清单。总 digest ≤500 行。标出 **claimed error**（日志声称的错）。
 5. **返回预览指针**：`{raw_file: 路径, digest: <有界摘要>, key_lines: [行号...], claimed_error: "..."}`。取证按需 `sed -n 'X,Yp' <raw_file>` 回读。
 
@@ -57,11 +58,11 @@ permission:
 
 ## 约束
 
-- `edit: deny`；bash 仅 `grep/sed/awk/head/tail/wc/md5sum/mkdir` + 写 `/tmp/logscope/`。
+- `edit: deny`；bash 允 `grep/sed/awk/head/tail/wc/md5sum/mkdir` + `uv run --with drain3 python $HOME/.logscope/scripts/drain3_triage.py` + 写 `/tmp/logscope/`。
 - **不把原始日志整文件输出**；任何命令输出截断（`| head -200` / `| wc -l`）。
 - 不调 LLM；纯确定性分流。
 
-## 升级路径（v1 不装，记录在案）
+## 升级路径
 
-- 装 **Drain3**（`uv tool install drain3` 或 `uv run --with drain3 ...`）替换 sed 模板归并，精度更高 + 参数抽取 + PII masking。
-- 接 **MCP log server**（如 `wolven-tech/mcp-log-server`）把本 agent 的 grep 换成结构化 MCP 工具（search_logs/correlate/trace_ids），agent 直接调。
+- ✅ **Drain3 已装 + 持久化**（`uv run --with drain3`，脚本 `$HOME/.logscope/scripts/drain3_triage.py`，模板 `~/.logscope/templates/<profile>.json`）——替 sed 归并，跨 run 累积，本次新见簇标为信号。**改源脚本后重装**：`cp log_analysis/scripts/drain3_triage.py ~/.logscope/scripts/`（Linux 也可 `ln -sf`）。
+- ⏳ 接 **MCP log server**（如 `wolven-tech/mcp-log-server`）把本 agent 的 grep 换成结构化 MCP 工具（search_logs/correlate/trace_ids），agent 直接调。
