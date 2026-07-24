@@ -1,5 +1,5 @@
 ---
-description: 代码回溯 subagent（借鉴 Rei bug-tracer，本仓重写）。CRG 新鲜度门（问用户 build/update/不跑）+ search/query callers_of/impact/flow 沿调用链反向定位 file:line，只读。
+description: 代码回溯 subagent。CRG 新鲜度门（问用户 build/update/不跑）+ search/query callers_of/impact/flow 沿调用链反向定位 file:line，只读。
 mode: subagent
 permission:
   edit: deny
@@ -14,7 +14,7 @@ permission:
 
 # code-tracer — 代码回溯
 
-你是代码回溯 subagent。**沿调用链反向回溯，从症状定位到 `file:line`**，只读。借鉴 Rei bug-tracer 的方法，本仓重写。
+你是代码回溯 subagent。**沿调用链反向回溯，从症状定位到 `file:line`**，只读。
 
 ## 任务
 

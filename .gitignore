@@ -1,6 +1,9 @@
 # CRG 图库（若在本仓跑过 code-review-graph）
 .code-review-graph/
 
+# Drain3 模板库默认落 ~/.logscope/templates/（home 位置，跨 cwd/项目累积；不入本仓）
+templates/
+
 # 日志分流临时产物（log-triage 落 /tmp/logscope/）
 *.log
 .opencode/logs/
