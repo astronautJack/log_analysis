@@ -19,39 +19,34 @@
 | **opencode** ≥ 1.18 | 工具集跑在 opencode 上 |
 | **git** | Windows 生产：装 [Git for Windows](https://git-scm.com/download/win)（只需 git，**不依赖 Git Bash**）；agent 只用 git+uv+python+opencode 原生工具 |
 | **uv** + **code-review-graph** (CRG) | `uv tool install code-review-graph` → `~/.local/bin/code-review-graph` |
-| **opencode-dcp** (DCP) | `opencode plugin @tarquinen/opencode-dcp@latest --global` → 上下文兜底 |
+| **opencode-dcp** (DCP) | `npm install -g @tarquinen/opencode-dcp@latest`（需 node/npm；项目 opencode.json 已引用）→ 上下文兜底 |
 | **glm-5.2 端点** | 公司内网 LLM 端点（`model`/`small_model` 由全局 opencode 配置提供，本仓不写死） |
 
 ## 安装
 
-> Linux/macOS 用 bash；**Windows 生产**用 **PowerShell**（opencode Windows 原生，**不依赖 Git Bash**，只需 git + uv）。下面命令跨平台，差异处标了 PS 版。
+> Linux/macOS 用 bash；**Windows 生产**用 **PowerShell**（opencode Windows 原生，**不依赖 Git Bash**，只需 git + uv + node/npm）。
 
 ```bash
 # 1. 拿到本仓
 git clone <本仓地址> log_analysis
 cd log_analysis
 
-# 2. 装 uv  （Windows PowerShell: irm https://astral.sh/install.ps1 | iex）
-curl -LsSf https://astral.sh/install.sh | sh        # Linux/macOS
+# 2. 装 uv（setup 用它装 CRG + logscope-triage）
+#    Linux/macOS:  curl -LsSf https://astral.sh/install.sh | sh
+#    Win PS:        irm https://astral.sh/install.ps1 | iex
 
-# 3. 装 CRG  （uv 跨平台）
-uv tool install code-review-graph
+# 3. 一键装三依赖（CRG/uv + DCP/npm + logscope-triage/uv）
+#    Linux/macOS:  bash .opencode/setup.sh
+#    Win PS:        .\.opencode\setup.ps1
+#    （手动逐条见 .opencode/REQUIREMENTS.md）
 
-# 4. 装 DCP 全局插件
-opencode plugin @tarquinen/opencode-dcp@latest --global
-
-# 5. 确保 ~/.local/bin（CRG）在 PATH
-#    uv 安装器通常已加；没有则——Linux: export PATH="$HOME/.local/bin:$PATH"
-#                          Win PS: $env:Path += ";$HOME\.local\bin"  （永久用 setx）
-#    或 agent 直接用全路径 ~/.local/bin/code-review-graph（Windows 加 .exe）
-
-# 5.1 装 LogScope 日志分流 CLI（logscope-triage，装到 ~/.local/bin，像 CRG 一样在 PATH）
-uv tool install .
-#     改源（src/logscope_triage/）后重装：uv tool install --force .
-
-# 6. 在本仓启动 opencode（加载 .opencode/ + AGENTS.md + opencode.json）
+# 4. 在本仓启动 opencode（加载 .opencode/ + AGENTS.md + opencode.json）
 opencode
 ```
+
+确保 `~/.local/bin`（CRG/logscope-triage）在 PATH——uv 安装器通常已加；没有则 Win PS `$env:Path += ";$HOME\.local\bin"`。
+
+改完 `.opencode/`/`opencode.json`/`~/.config/opencode/dcp.jsonc` 后**重启 opencode** 才生效。
 
 改完 `.opencode/`、`opencode.json`、或 `~/.config/opencode/dcp.jsonc`（Windows：`C:\Users\<你>\.config\opencode\dcp.jsonc`）后**重启 opencode** 才生效。
 
