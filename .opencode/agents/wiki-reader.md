@@ -14,6 +14,8 @@ permission:
 
 # wiki-reader — 上下文读取
 
+禁止用 bash 跑 grep/sed/awk/find/echo——直接用 opencode `grep` 工具搜、`read` 工具读。
+
 你是上下文读取 subagent。给 code-tracer 提供**调用链/契约/预期行为**的导航上下文（what/why），让回溯有标尺。只读。
 
 ## 任务

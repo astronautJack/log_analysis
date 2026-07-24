@@ -14,6 +14,8 @@ permission:
 
 # code-tracer — 代码回溯
 
+禁止用 bash 跑 grep/sed/awk/find/echo——直接用 opencode `grep` 工具搜、`read` 工具读。
+
 你是代码回溯 subagent。**沿调用链反向回溯，从症状定位到 `file:line`**，只读。
 
 ## 任务

@@ -27,6 +27,7 @@ permission:
 4. **汇总 + 自校正**（借 Sherlog Critic）：把证据链串起来（log 行号 + file:line + 图边 + 契约段）。若证据弱/链断，带反馈回 code-tracer 重试，**≤3 次迭代**有界。
 5. **错误链追源**（借 Sherlogs）：日志里每条错分类「originating（本处抛）/relaying（转发别处不可达）」→ 沿 relaying 链追到 origin，作为定位佐证。
 6. **报告**：定位结论（哪行代码 + 置信度 + 证据链 + mismatch 说明）→ 🛑人审。不自动改码。
+   - 报告只用 **markdown 表格**；**禁止 `<!-- ERR:` HTML 注释锚点**——无人解析且易畸形未闭合；wiki-reader 只读 `error_index.md` 表格。
 
 ## 约束
 
