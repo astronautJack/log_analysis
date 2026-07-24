@@ -18,6 +18,7 @@
 |---|---|
 | **opencode** ≥ 1.18 | 工具集跑在 opencode 上 |
 | **git** | Windows 生产：装 [Git for Windows](https://git-scm.com/download/win)（只需 git，**不依赖 Git Bash**）；agent 只用 git+uv+python+opencode 原生工具 |
+| **node ≥ 18 / npm** | DCP 经 npm 装（setup 用；node 自带 npm） |
 | **uv** + **code-review-graph** (CRG) | `uv tool install code-review-graph` → `~/.local/bin/code-review-graph` |
 | **opencode-dcp** (DCP) | `npm install -g @tarquinen/opencode-dcp@latest`（需 node/npm；项目 opencode.json 已引用）→ 上下文兜底 |
 | **glm-5.2 端点** | 公司内网 LLM 端点（`model`/`small_model` 由全局 opencode 配置提供，本仓不写死） |
@@ -54,7 +55,8 @@ opencode
 
 | 命令 | 作用 | 参数 |
 |---|---|---|
-| `/diag <日志\|文本> [--repo] [--wiki]` | 日志问题定位到代码行 | `--repo` 必填；`--wiki` 指目标仓 wiki 目录（可选） |
+| `/diag <日志\|文本> [--repo] [--wiki] [--log-format]` | 日志问题定位到代码行 | `--repo` 必填；`--wiki` 目标仓 wiki 目录；`--log-format auto\|harmony`（鸿蒙日志用 harmony） |
+| `/wiki-flow <repo> [out] [flow-prefix]` | 生成业务流 wiki（调用链+错误目录，给 /diag 当 log→code 直达电梯） | `out` 默认当前 opencode 目录 |
 
 人在 loop：`/diag` 报告供审；不自动改码、不自动 commit。
 
@@ -82,14 +84,20 @@ opencode
 
 ```
 log_analysis/
-├── opencode.json          # 配置（默认 agent=logscope-dev、权限、compaction）
+├── opencode.json          # 配置（default_agent=logscope-dev、权限、compaction、plugin 引用 DCP）
 ├── AGENTS.md              # agent-facing 约定
 ├── README.md              # 本文件
 ├── 方案设计.md            # 设计稿
 ├── 完成情况.md            # 开发/验证状态
+├── pyproject.toml         # logscope-triage 包定义（uv tool install . 用）
+├── src/logscope_triage/   # logscope-triage CLI 源（Drain3 + 鸿蒙 hilog/HiSysEvent/faultlog parser）
+├── test/                  # 样本：鸿蒙日志 + 投播业务流 wiki + error_index
 ├── .opencode/
-│   ├── agents/            # logscope-dev / log-triage / code-tracer / wiki-reader
-│   └── commands/          # /diag
+│   ├── agents/            # logscope-dev / log-triage / code-tracer / wiki-reader / flow-writer（5）
+│   ├── commands/          # /diag / /wiki-flow
+│   ├── setup.sh           # 一键装依赖（Linux/macOS bash）
+│   ├── setup.ps1          # 一键装依赖（Windows PowerShell）
+│   └── REQUIREMENTS.md    # 依赖清单 + 装法
 ```
 
 开发在 `/home/dlrow_hl/log_analysis_dev`（独立工作区，`AGENTS.md` 指导开发）。详细设计见 `方案设计.md`。
