@@ -45,10 +45,9 @@ opencode plugin @tarquinen/opencode-dcp@latest --global
 #                          Win PS: $env:Path += ";$HOME\.local\bin"  （永久用 setx）
 #    或 agent 直接用全路径 ~/.local/bin/code-review-graph（Windows 加 .exe）
 
-# 5.1 装 LogScope 日志分流脚本到全局（去 cwd；log-triage 用 ~/.logscope/scripts/ 调）
-#     Linux:  mkdir -p ~/.logscope/scripts && cp scripts/drain3_triage.py ~/.logscope/scripts/
-#     Win PS:  mkdir -Force ~/.logscope/scripts; cp scripts/drain3_triage.py ~/.logscope/scripts/
-#     改源脚本后重装：重跑上面（Linux 也可 ln -sf）
+# 5.1 装 LogScope 日志分流 CLI（logscope-triage，装到 ~/.local/bin，像 CRG 一样在 PATH）
+uv tool install .
+#     改源（src/logscope_triage/）后重装：uv tool install --force .
 
 # 6. 在本仓启动 opencode（加载 .opencode/ + AGENTS.md + opencode.json）
 opencode
@@ -82,7 +81,7 @@ opencode
 - **日志不进上下文**：log-triage 产有界 digest + 预览指针；取证按需用 opencode `read` 工具回读行段（跨平台，不用 sed）。
 - **CRG 新鲜度门**：code-tracer 先查图新鲜（`status`+`detect-changes`），缺失/过时会**问你要不要 agent 跑 build/update**，不擅自建图（大仓 build 贵）。
 - **CRG 副作用**：会在目标仓建 `.code-review-graph/`（图库）；建议加进该仓 `.gitignore`。
-- **日志结构化**：纯 Python（Drain3）脚本 `~/.logscope/scripts/drain3_triage.py`，跨平台不依赖 Unix 工具；模板持久化 `~/.logscope/templates/` 跨 run 累积。升级可接 **MCP log server**（如 `wolven-tech/mcp-log-server`）。详见 `方案设计.md` §5。
+- **日志结构化**：`logscope-triage` CLI（`uv tool install .` 装，纯 Python 跨平台）；模板持久化 `~/.logscope/templates/` 跨 run 累积。升级可接 **MCP log server**（如 `wolven-tech/mcp-log-server`）。详见 `方案设计.md` §5。
 
 ## 目录结构
 
